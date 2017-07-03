@@ -1,17 +1,18 @@
 package com.cf.data.map.poloniex;
 
-import com.cf.data.model.poloniex.PoloniexFeeInfo;
-import com.cf.data.model.poloniex.PoloniexOpenOrder;
-import com.cf.data.model.poloniex.PoloniexOrderResult;
-import com.cf.data.model.poloniex.PoloniexTradeHistory;
-import java.math.BigDecimal;
-import java.util.List;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
+
+import com.cf.data.model.poloniex.PoloniexFeeInfo;
+import com.cf.data.model.poloniex.PoloniexOpenOrder;
+import com.cf.data.model.poloniex.PoloniexOrderResult;
+import com.cf.data.model.poloniex.PoloniexTradeHistory;
 import org.junit.Test;
+
+import java.util.List;
 
 /**
  *
@@ -110,10 +111,10 @@ public class PoloniexDataMapperTest
         PoloniexOrderResult orderResult = mapper.mapTradeOrder(data);
         assertEquals(31226040L, orderResult.orderNumber.longValue());
         assertEquals(1, orderResult.resultingTrades.size());
-        assertEquals(BigDecimal.valueOf(338.8732), orderResult.resultingTrades.get(0).amount);
+        assertEquals("338.8732", orderResult.resultingTrades.get(0).amount);
         assertEquals("2014-10-18T23:03:21", orderResult.resultingTrades.get(0).date.toString());
-        assertEquals(BigDecimal.valueOf(0.00000173), orderResult.resultingTrades.get(0).rate);
-        assertEquals(BigDecimal.valueOf(0.00058625), orderResult.resultingTrades.get(0).total);
+        assertEquals("0.00000173", orderResult.resultingTrades.get(0).rate);
+        assertEquals("0.00058625", orderResult.resultingTrades.get(0).total);
         assertEquals("16164", orderResult.resultingTrades.get(0).tradeID);
         assertEquals("buy", orderResult.resultingTrades.get(0).type);
         assertNull(orderResult.error);
@@ -187,8 +188,8 @@ public class PoloniexDataMapperTest
         assertEquals(84912521L, first.globalTradeID.longValue());
         assertEquals("1640236", first.tradeID);
         assertEquals("2017-03-06T18:49:34", first.date.toString());
-        assertEquals("1273.37202076", first.rate.toPlainString());
-        assertEquals("0.00150000", first.fee.toPlainString());
+        assertEquals("1273.37202076", first.rate);
+        assertEquals("0.00150000", first.fee);
         assertEquals("55510230325", first.orderNumber);
         assertEquals("buy", first.type);
         assertEquals("exchange", first.category);

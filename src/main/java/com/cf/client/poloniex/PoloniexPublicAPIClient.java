@@ -2,8 +2,10 @@ package com.cf.client.poloniex;
 
 import com.cf.PriceDataAPIClient;
 import com.cf.client.HTTPClient;
-import java.io.IOException;
+import org.apache.logging.log4j.Level;
 import org.apache.logging.log4j.LogManager;
+
+import java.io.IOException;
 
 /**
  *
@@ -12,7 +14,7 @@ import org.apache.logging.log4j.LogManager;
 public class PoloniexPublicAPIClient implements PriceDataAPIClient
 {
 
-    private static final String PUBLIC_URL = "https://poloniex.com/public?";
+    private static final String PUBLIC_URL = "https://api.poloniex.com/public?";
     private final HTTPClient client;
 
     public PoloniexPublicAPIClient()
@@ -35,7 +37,11 @@ public class PoloniexPublicAPIClient implements PriceDataAPIClient
         }
         catch (IOException ex)
         {
-            LogManager.getLogger(PoloniexPublicAPIClient.class).warn("Call to return ticker API resulted in exception - " + ex.getMessage(), ex);
+	        if (LogManager.getLogger().getLevel().isLessSpecificThan(Level.DEBUG)) {
+		        LogManager.getLogger(PoloniexPublicAPIClient.class).debug("Call to return ticker API resulted in exception - " + ex.getMessage(), ex);
+	        }else{
+		        LogManager.getLogger(PoloniexPublicAPIClient.class).warn("Call to return ticker API resulted in exception - " + ex.getMessage());
+	        }
         }
 
         return null;
@@ -76,7 +82,11 @@ public class PoloniexPublicAPIClient implements PriceDataAPIClient
         }
         catch (IOException ex)
         {
-            LogManager.getLogger(PoloniexPublicAPIClient.class).warn("Call to Chart Data API resulted in exception - " + ex.getMessage(), ex);
+	        if (LogManager.getLogger().getLevel().isLessSpecificThan(Level.DEBUG)) {
+		        LogManager.getLogger(PoloniexPublicAPIClient.class).debug("Call to Chart Data API resulted in exception - " + ex.getMessage(), ex);
+	        } else {
+		        LogManager.getLogger(PoloniexPublicAPIClient.class).warn("Call to Chart Data API resulted in exception - " + ex.getMessage());
+	        }
         }
 
         return null;

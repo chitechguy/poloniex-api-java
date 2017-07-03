@@ -3,18 +3,20 @@ package com.cf.client.poloniex;
 
 import com.cf.TradingAPIClient;
 import com.cf.client.HTTPClient;
+import org.apache.commons.codec.binary.Hex;
+import org.apache.http.NameValuePair;
+import org.apache.http.message.BasicNameValuePair;
+import org.apache.logging.log4j.Level;
+import org.apache.logging.log4j.LogManager;
+
+import javax.crypto.Mac;
+import javax.crypto.spec.SecretKeySpec;
 import java.io.IOException;
 import java.math.BigDecimal;
 import java.security.InvalidKeyException;
 import java.security.NoSuchAlgorithmException;
 import java.util.ArrayList;
 import java.util.List;
-import javax.crypto.Mac;
-import javax.crypto.spec.SecretKeySpec;
-import org.apache.commons.codec.binary.Hex;
-import org.apache.http.NameValuePair;
-import org.apache.http.message.BasicNameValuePair;
-import org.apache.logging.log4j.LogManager;
 
 /**
  *
@@ -22,17 +24,26 @@ import org.apache.logging.log4j.LogManager;
  */
 public class PoloniexTradingAPIClient implements TradingAPIClient
 {
-    private static final String TRADING_URL = "https://poloniex.com/tradingApi?";
+    private static final String TRADING_URL = "https://www.poloniex.com/tradingApi?";
     private final String apiKey;
     private final String apiSecret;
+    private final boolean alreadySigned;
     private final HTTPClient client;
 
     public PoloniexTradingAPIClient(String apiKey, String apiSecret)
     {
         this.apiKey = apiKey;
         this.apiSecret = apiSecret;
+        this.alreadySigned = false;
         this.client = new HTTPClient();
     }
+	public PoloniexTradingAPIClient(String apiKey, String apiSecret, boolean alreadySigned)
+	{
+		this.apiKey = apiKey;
+		this.apiSecret = apiSecret;
+		this.alreadySigned = alreadySigned;
+		this.client = new HTTPClient();
+	}
 
     @Override
     public String returnBalances()
@@ -118,7 +129,7 @@ public class PoloniexTradingAPIClient implements TradingAPIClient
         {
             List<NameValuePair> postParams = new ArrayList<>();
             postParams.add(new BasicNameValuePair("command", commandValue));
-            postParams.add(new BasicNameValuePair("nonce", String.valueOf(System.currentTimeMillis())));
+            postParams.add(new BasicNameValuePair("nonce", String.valueOf(System.currentTimeMillis() * 10000)));
 
             if (additionalPostParams != null && additionalPostParams.size() > 0)
             {
@@ -135,11 +146,12 @@ public class PoloniexTradingAPIClient implements TradingAPIClient
                 sb.append(postParam.getName()).append("=").append(postParam.getValue());
             }
             String body = sb.toString();
-
-            Mac mac = Mac.getInstance("HmacSHA512");
-            mac.init(new SecretKeySpec(apiSecret.getBytes(), "HmacSHA512"));
-            String signature = new String(Hex.encodeHex(mac.doFinal(body.getBytes())));
-
+	        String signature = apiSecret;
+            if (!alreadySigned) {
+	            Mac mac = Mac.getInstance("HmacSHA512");
+	            mac.init(new SecretKeySpec(apiSecret.getBytes(), "HmacSHA512"));
+	            signature = new String(Hex.encodeHex(mac.doFinal(body.getBytes())));
+            }
             List<NameValuePair> httpHeaders = new ArrayList<>();
             httpHeaders.add(new BasicNameValuePair("Key", apiKey));
             httpHeaders.add(new BasicNameValuePair("Sign", signature));
@@ -148,7 +160,11 @@ public class PoloniexTradingAPIClient implements TradingAPIClient
         }
         catch (IOException | NoSuchAlgorithmException | InvalidKeyException ex)
         {
-            LogManager.getLogger(PoloniexTradingAPIClient.class).warn("Call to Poloniex Trading API resulted in exception - " + ex.getMessage(), ex);
+	        if (LogManager.getLogger().getLevel().isLessSpecificThan(Level.DEBUG)) {
+		        LogManager.getLogger(PoloniexTradingAPIClient.class).debug("Call to Poloniex Trading API resulted in exception - " + ex.getMessage(), ex);
+	        } else {
+		        LogManager.getLogger(PoloniexTradingAPIClient.class).warn("Call to Poloniex Trading API resulted in exception - " + ex.getMessage());
+	        }
         }
 
         return null;
