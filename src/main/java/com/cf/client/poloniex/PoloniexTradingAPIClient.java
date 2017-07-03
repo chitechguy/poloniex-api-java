@@ -27,23 +27,14 @@ public class PoloniexTradingAPIClient implements TradingAPIClient
     private static final String TRADING_URL = "https://www.poloniex.com/tradingApi?";
     private final String apiKey;
     private final String apiSecret;
-    private final boolean alreadySigned;
     private final HTTPClient client;
 
     public PoloniexTradingAPIClient(String apiKey, String apiSecret)
     {
         this.apiKey = apiKey;
         this.apiSecret = apiSecret;
-        this.alreadySigned = false;
         this.client = new HTTPClient();
     }
-	public PoloniexTradingAPIClient(String apiKey, String apiSecret, boolean alreadySigned)
-	{
-		this.apiKey = apiKey;
-		this.apiSecret = apiSecret;
-		this.alreadySigned = alreadySigned;
-		this.client = new HTTPClient();
-	}
 
     @Override
     public String returnBalances()
@@ -145,14 +136,12 @@ public class PoloniexTradingAPIClient implements TradingAPIClient
                 }
                 sb.append(postParam.getName()).append("=").append(postParam.getValue());
             }
-            String body = sb.toString();
-	        String signature = apiSecret;
-            if (!alreadySigned) {
-	            Mac mac = Mac.getInstance("HmacSHA512");
-	            mac.init(new SecretKeySpec(apiSecret.getBytes(), "HmacSHA512"));
-	            signature = new String(Hex.encodeHex(mac.doFinal(body.getBytes())));
-            }
-            List<NameValuePair> httpHeaders = new ArrayList<>();
+	        String body = sb.toString();
+	        Mac mac = Mac.getInstance("HmacSHA512");
+	        mac.init(new SecretKeySpec(apiSecret.getBytes(), "HmacSHA512"));
+	        String signature = new String(Hex.encodeHex(mac.doFinal(body.getBytes())));
+
+	        List<NameValuePair> httpHeaders = new ArrayList<>();
             httpHeaders.add(new BasicNameValuePair("Key", apiKey));
             httpHeaders.add(new BasicNameValuePair("Sign", signature));
 
