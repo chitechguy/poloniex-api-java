@@ -1,18 +1,26 @@
 package com.cf;
 
 /**
- *
  * @author David
  */
-public interface PriceDataAPIClient
-{
-    public String returnTicker();
+public interface PriceDataAPIClient {
 
-    public String getUSDBTCChartData(Long periodInSeconds, Long startEpochInSeconds);
+	String returnTicker();
 
-    public String getUSDETHChartData(Long periodInSeconds, Long startEpochInSeconds);
+	String returnOrderBook(String currencyPair);
 
-    public String getChartData(String currencyPair, Long periodInSeconds, Long startEpochSeconds);
+	String return24Volume();
 
-    public String getChartData(String currencyPair, Long periodInSeconds, Long startEpochSeconds, Long endEpochSeconds);
+	String returnTradeHistory(String currencyPair, Long startEpochSeconds, Long endEpochSeconds);
+
+	String returnTradeHistory(String currencyPair);
+
+	String getUSDBTCChartData(Long periodInSeconds, Long startEpochInSeconds);
+
+	String getUSDETHChartData(Long periodInSeconds, Long startEpochInSeconds);
+
+	String getChartData(String currencyPair, Long periodInSeconds, Long startEpochSeconds);
+
+	String getChartData(String currencyPair, Long periodInSeconds, Long startEpochSeconds, Long endEpochSeconds);
+
 }
