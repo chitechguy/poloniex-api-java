@@ -56,9 +56,9 @@ public class PoloniexPublicAPIClient implements PriceDataAPIClient {
 	}
 
 	@Override
-	public String return24Volume() {
+	public String return24hVolume() {
 		try {
-			String url = PUBLIC_URL + "command=return24Volume";
+			String url = PUBLIC_URL + "command=return24hVolume";
 			return client.getHttp(url, null);
 		} catch (IOException ex) {
 			if (LogManager.getLogger().getLevel().isLessSpecificThan(Level.DEBUG)) {

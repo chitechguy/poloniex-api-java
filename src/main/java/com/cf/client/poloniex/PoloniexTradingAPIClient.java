@@ -28,14 +28,14 @@ public class PoloniexTradingAPIClient implements TradingAPIClient
     private final String apiKey;
     private final String apiSecret;
     private final HTTPClient client;
-    private final int noneLength;
+    private final int nonceLength;
 
     public PoloniexTradingAPIClient(String apiKey, String apiSecret)
     {
         this.apiKey = apiKey;
         this.apiSecret = apiSecret;
         this.client = new HTTPClient();
-        this.noneLength = 17;
+        this.nonceLength = 17;
     }
 
 	public PoloniexTradingAPIClient(String apiKey, String apiSecret, int nonceLength)
@@ -43,7 +43,7 @@ public class PoloniexTradingAPIClient implements TradingAPIClient
 		this.apiKey = apiKey;
 		this.apiSecret = apiSecret;
 		this.client = new HTTPClient();
-		this.noneLength = nonceLength;
+		this.nonceLength = nonceLength;
 	}
 
     @Override
@@ -130,7 +130,7 @@ public class PoloniexTradingAPIClient implements TradingAPIClient
         {
             List<NameValuePair> postParams = new ArrayList<>();
             postParams.add(new BasicNameValuePair("command", commandValue));
-	        String nonce = rightPadding(String.valueOf(System.currentTimeMillis()), noneLength);
+	        String nonce = rightPadding(String.valueOf(System.currentTimeMillis()), nonceLength);
 	        postParams.add(new BasicNameValuePair("nonce", nonce));
 
             if (additionalPostParams != null && additionalPostParams.size() > 0)
@@ -177,7 +177,7 @@ public class PoloniexTradingAPIClient implements TradingAPIClient
     }
 
 	private String rightPadding(String str, int num) {
-		return String.format("%1$-" + num + "s", str);
+		return String.format("%1$-" + num + "s", str).replace(' ', '0');
 	}
 
 }

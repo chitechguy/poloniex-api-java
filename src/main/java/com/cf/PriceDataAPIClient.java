@@ -9,7 +9,7 @@ public interface PriceDataAPIClient {
 
 	String returnOrderBook(String currencyPair);
 
-	String return24Volume();
+	String return24hVolume();
 
 	String returnTradeHistory(String currencyPair, Long startEpochSeconds, Long endEpochSeconds);
 
